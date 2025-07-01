@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './Home.module.css';
-import Grid from "./Grid";
+import Grid from "../components/Grid";
 
 function Home() {
   return (
