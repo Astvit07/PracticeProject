@@ -1,0 +1,22 @@
+.grid_item {
+    display: flex;
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 24px;
+    font-weight: 600;
+    color: Black;
+    &:hover {
+        background-color: #f0f0f0;
+    }
+
+}
+.active {
+    background-color: #d0f0c0;
+    border-color: #4caf50;
+}
