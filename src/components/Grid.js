@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import GridItem from "./GridItem";
-import Dictionary from "../service./dictionary";
+import Dictionary from "../service/dictionary";
 
 const GRID_SIZE = 5;
 
