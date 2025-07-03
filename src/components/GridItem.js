@@ -10,6 +10,14 @@ export default function GridItem({ letter }) {
   const clearActiveGridItem = () => {
     setActive(false)
   }
+  
+  /*
+  const classes = className([
+    classes.grid_item,                         ----> https://www.npmjs.com/package/classnames
+    active ? classes.active : ''
+  ]);
+  */
+  
   return (
     <div className={`${classes.grid_item} ${active ? classes.active : ''}`}
          onClick={handleActiveGridItem}>
