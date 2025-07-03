@@ -8,12 +8,17 @@ function MainNavigation() {
         <ul>
           <li>
             <NavLink to="/" end>
-              Words
+              Home
             </NavLink>
           </li>
           <li>
             <NavLink to="/test">
               Other
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/game">
+              Game
             </NavLink>
           </li>
         </ul>
