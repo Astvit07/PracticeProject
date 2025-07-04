@@ -61,7 +61,12 @@ export default function Grid() {
 
       {board.map((row, rowIndex) =>
         row.map((letter, colIndex) => (
-          <GridItem key={`${rowIndex}-${colIndex}`} letter={letter} />
+          <GridItem
+            key={`${rowIndex}-${colIndex}`}
+            letter={letter}
+            row={rowIndex}
+            col={colIndex}
+          />
         ))
       )}
 

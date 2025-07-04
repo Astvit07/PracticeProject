@@ -1,7 +1,9 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {PlayerContext} from "./PlayerContext";
 
 export default function PlayerInfo({name}) {
   const [score, setScore] = useState('')
+  const {playerLetters} = useContext(PlayerContext);
   return (
     <div className="player-info">
       <h2>Player Information</h2>
@@ -11,6 +13,7 @@ export default function PlayerInfo({name}) {
 
       </div>
       {score !== '' && <p>Score: {score}</p>}
+      {playerLetters && playerLetters.map(l => <span key={l.letter}>{l.letter}</span>)}
 </div>
   );
 }
