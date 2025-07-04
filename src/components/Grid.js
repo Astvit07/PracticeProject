@@ -37,7 +37,7 @@ function generateBoardFromWords(words) {
 
 
 
-export default function Grid() {
+export default function Grid({activePlayer}) {
   // const initBoard = emptyGrid();
   const [board, setBoard] = useState([]);
   useEffect(() => {
@@ -66,6 +66,7 @@ export default function Grid() {
             letter={letter}
             row={rowIndex}
             col={colIndex}
+            activePlayer={activePlayer}
           />
         ))
       )}

@@ -9,19 +9,24 @@ function Game() {
   const [modalIsOpen, setModalIsOpen] = useState(true);
   const [firstPlayerName, setFirstPlayerName] = useState('Player 1');
   const [secondPlayerName, setSecondPlayerName] = useState('Player 1');
+  const [activePlayer, setActivePlayer] = useState(true);
+
   const handleStart = () => {
     setModalIsOpen(false);
   }
+
+  const handleNextTurn = () => setActivePlayer(prevState => !prevState);
+
   return (
     <PlayerProvider>
       <div className={classes.container}>
         <div className={classes['board-container']}>
-          <PlayerInfo name={firstPlayerName}/>
-          <Grid/>
-          <PlayerInfo name={secondPlayerName}/>
+          <PlayerInfo name={firstPlayerName} isActive={activePlayer} isFirstPlayer={true}/>
+          <Grid activePlayer={activePlayer} />
+          <PlayerInfo name={secondPlayerName} isActive={!activePlayer} isFirstPlayer={false}/>
         </div>
         <div className={`${classes.centered} ${classes['p-3']}`  }>
-          <button>Go</button>
+          <button onClick={handleNextTurn}>Go</button>
         </div>
 
         <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>

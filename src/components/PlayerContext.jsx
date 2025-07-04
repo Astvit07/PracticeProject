@@ -2,9 +2,17 @@ import {createContext, useState} from "react";
 
 export const PlayerContext = createContext()
 export function PlayerProvider({children}){
-  const [playerLetters, setPlayerLetters] = useState( [])
+  const [firstPlayerLetters, setFirstPlayerLetters] = useState( [])
+  const [secondPlayerLetters, setSecondPlayerLetters] = useState( [])
+
+
   return (
-    <PlayerContext.Provider value={{playerLetters, setPlayerLetters}}>
+    <PlayerContext.Provider value={{
+      firstPlayerLetters,
+      setFirstPlayerLetters,
+      secondPlayerLetters,
+      setSecondPlayerLetters,
+    }}>
       {children}
     </PlayerContext.Provider>
   )
