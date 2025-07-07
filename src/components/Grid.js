@@ -61,7 +61,8 @@ export default function Grid({activePlayer}) {
 
       {board.map((row, rowIndex) =>
         row.map((letter, colIndex) => (
-          <GridItem
+          // todo 1. додати юзМемо для GridItem
+          <GridItem  /*todo 3.через юзМемо додавати рідонлі для клітинок*/
             key={`${rowIndex}-${colIndex}`}
             letter={letter}
             row={rowIndex}

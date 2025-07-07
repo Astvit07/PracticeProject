@@ -7,9 +7,9 @@ export default function  PlayerNameInput ({value,onChange, ...props}) {
   return (
     <input
       type="text"
-      placeholder={value}
+      placeholder="Player Name"
       value={value}
-      required={true}
+      required
       // onChange={(e) => setFirstPlayerName(e.target.value)}
       onChange={onChange}
       {...props}

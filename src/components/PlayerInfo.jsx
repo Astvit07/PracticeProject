@@ -1,17 +1,19 @@
 import {useContext, useState} from "react";
-import {PlayerContext} from "./PlayerContext";
 import classes from './PlayerInfo.module.css';
+import {GameContext} from "./GameContext";
 
 export default function PlayerInfo({name , isActive , isFirstPlayer}) {
 
   const [score, setScore] = useState('')
-  const {
-    firstPlayerLetters,
-    secondPlayerLetters,
-    setModalIsOpen,
-  } = useContext(PlayerContext);
 
-  const playerLetters = isFirstPlayer ? firstPlayerLetters : secondPlayerLetters;
+  const {
+    firstPlayerWords,
+    secondPlayerWords,
+    setModalIsOpen,
+  } = useContext(GameContext);
+
+  const playerWords = isFirstPlayer ? firstPlayerWords : secondPlayerWords;
+
 
   return (
     <div className="player-info">
@@ -25,7 +27,14 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
 
       </div>
       {score !== '' && <p>Score: {score}</p>}
-      {playerLetters && playerLetters.map(l => <span key={l.letter}>{l.letter}</span>)}
-</div>
+      <ul>
+        {playerWords && playerWords.map((word,index) => (
+          <>
+            <li key={index}>{word.map(l => l.letter).join('')}</li>
+          </>
+        ))}
+
+      </ul>
+    </div>
   );
 }

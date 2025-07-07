@@ -15,3 +15,14 @@
 .p-3 {
   padding: 48px 12px;
 }
+
+.inputBox {
+  display: flex;
+  gap: 24px;
+  input {
+    background-color: white;
+    line-height: 36px;
+    color: black;
+    padding: 4px 12px;
+  }
+}
