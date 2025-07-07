@@ -1,16 +1,25 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import classes from './Game.module.css';
 import Grid from "../components/Grid";
 import Modal from "../components/Modal/Modal";
 import PlayerInfo from "../components/PlayerInfo";
-import {PlayerProvider} from "../components/PlayerContext";
+import {PlayerContext} from "../components/PlayerContext";
+import PlayerNameInput from "./PlayerNameInput";
 
 function Game() {
-  const [modalIsOpen, setModalIsOpen] = useState(true);
-  const [firstPlayerName, setFirstPlayerName] = useState('Player 1');
-  const [secondPlayerName, setSecondPlayerName] = useState('Player 1');
+  // const [modalIsOpen, setModalIsOpen] = useState(true);
+  // const [firstPlayerName, setFirstPlayerName] = useState('Player 1');
+  // const [secondPlayerName, setSecondPlayerName] = useState('Player 1');
   const [activePlayer, setActivePlayer] = useState(true);
-
+  const {
+    firstPlayerName,
+    secondPlayerName,
+    setFirstPlayerName,
+    setSecondPlayerName,
+    handlePlayerNameChange,
+    modalIsOpen,
+    setModalIsOpen
+  } = useContext(PlayerContext);
   const handleStart = () => {
     setModalIsOpen(false);
   }
@@ -18,12 +27,20 @@ function Game() {
   const handleNextTurn = () => setActivePlayer(prevState => !prevState);
 
   return (
-    <PlayerProvider>
+    <>
       <div className={classes.container}>
         <div className={classes['board-container']}>
-          <PlayerInfo name={firstPlayerName} isActive={activePlayer} isFirstPlayer={true}/>
+          <PlayerInfo
+            name={firstPlayerName}
+            isActive={activePlayer}
+            isFirstPlayer={true}
+          />
           <Grid activePlayer={activePlayer} />
-          <PlayerInfo name={secondPlayerName} isActive={!activePlayer} isFirstPlayer={false}/>
+          <PlayerInfo
+            name={secondPlayerName}
+            isActive={!activePlayer
+          } isFirstPlayer={false}
+          />
         </div>
         <div className={`${classes.centered} ${classes['p-3']}`  }>
           <button onClick={handleNextTurn}>Go</button>
@@ -32,27 +49,30 @@ function Game() {
         <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
           <Modal.Header>Введіть імена гравців</Modal.Header>
           <Modal.Body>
-            <input
-              type="text"
-              placeholder={firstPlayerName}
+            <PlayerNameInput
               value={firstPlayerName}
-              required={true}
-              onChange={(e) => setFirstPlayerName(e.target.value)}
+              onChange={handlePlayerNameChange(setFirstPlayerName)}
             />
-            <input
-              type="text"
-              placeholder={secondPlayerName}
+            <PlayerNameInput
               value={secondPlayerName}
-              required={true}
-              onChange={(e) => setSecondPlayerName(e.target.value)}
+              onChange={handlePlayerNameChange(setSecondPlayerName)}
             />
           </Modal.Body>
           <Modal.Actions>
-            <button onClick={handleStart}>Start</button>
+            <button
+              onClick={handleStart}
+              onKeyDown={e => {
+                if (e.key === "Enter") {
+                  handleStart();
+                }
+              }}
+            >
+              Start
+            </button>
           </Modal.Actions>
         </Modal>
       </div>
-    </PlayerProvider>
+    </>
   );
 }
 
