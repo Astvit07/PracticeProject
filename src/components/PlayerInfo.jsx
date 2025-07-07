@@ -7,7 +7,8 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
   const [score, setScore] = useState('')
   const {
     firstPlayerLetters,
-    secondPlayerLetters
+    secondPlayerLetters,
+    setModalIsOpen,
   } = useContext(PlayerContext);
 
   const playerLetters = isFirstPlayer ? firstPlayerLetters : secondPlayerLetters;
@@ -17,7 +18,10 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
       <h2 className={isActive && classes.active}>Player Information</h2>
       <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
         <p>Name: {name}</p>
-        <button className="btn btn-primary">edit</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => setModalIsOpen(true)}
+        >edit</button>
 
       </div>
       {score !== '' && <p>Score: {score}</p>}
