@@ -13,6 +13,7 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
   } = useContext(GameContext);
 
   const playerWords = isFirstPlayer ? firstPlayerWords : secondPlayerWords;
+  console.log({firstPlayerWords, secondPlayerWords})
 
 
   return (

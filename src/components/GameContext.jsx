@@ -6,22 +6,25 @@ export function GameProvider({children}){
   const [secondPlayerWords, setSecondPlayerWords] = useState( [])
   const [firstPlayerLetters, setFirstPlayerLetters] = useState( [])
   const [secondPlayerLetters, setSecondPlayerLetters] = useState( [])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [activePlayer, setActivePlayer] = useState(true);
-  const handleNextTurn = () => {
-    // setActivePlayer(prevState => !prevState);
-    if (activePlayer && firstPlayerLetters.length) {
-      const word = [...firstPlayerLetters];
-      setFirstPlayerWords(prev => [...prev, word]);
-      setFirstPlayerLetters([]);
-    } else if (!activePlayer && secondPlayerLetters.length) {
-      const word = [...secondPlayerLetters];
 
-      setSecondPlayerWords(prev => [...prev, word]);
-      setSecondPlayerLetters([]);
+  const [selectedCells, setSelectedCells] = useState([]);
+  const handleNextTurn = () => {
+    if (selectedCells.length >= 3) {
+      if (activePlayer && firstPlayerLetters.length) {
+        setFirstPlayerWords(prev => [...prev, firstPlayerLetters]);
+        setFirstPlayerLetters([]);
+      } else if (!activePlayer && secondPlayerLetters.length) {
+        setSecondPlayerWords(prev => [...prev, secondPlayerLetters]);
+        setSecondPlayerLetters([]);
+      }
     }
+    setSelectedCells([]);
     setActivePlayer(prev => !prev);
-  }
+    console.log('handleNextTurn');
+  };
+
 
   const handlePlayerNameChange = (name) =>(e)=>name(e.target.value);
 
@@ -43,6 +46,8 @@ export function GameProvider({children}){
       setFirstPlayerWords,
       secondPlayerWords,
       setSecondPlayerWords,
+      selectedCells,
+      setSelectedCells
     }}>
       {children}
     </GameContext.Provider>
