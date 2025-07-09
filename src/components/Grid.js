@@ -15,31 +15,17 @@ function generateBoardFromWords(words) {
   if  (firstWord.length === 0) return emptyGrid();
 
   const word = firstWord[Math.floor(Math.random() * firstWord.length)];
-
-
-  // if (words.length < GRID_SIZE) return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(""));
-  // const used = [...words];
-
-  // const board = [];
   const board = emptyGrid();
-
   const centerRow = Math.floor(GRID_SIZE / 2);
   board[centerRow] = word.split("");
-
-  // for (let i = 0; i < GRID_SIZE; i++) {
-  //   const idx = Math.floor(Math.random() * used.length);
-  //   const word = used.splice(idx, 1)[0];
-  //   board.push(word.split(""));
-  // }
   return board;
 }
 
 
-
-
 export default function Grid({activePlayer}) {
-  // const initBoard = emptyGrid();
   const [board, setBoard] = useState([]);
+  const [activeCell, setActiveCell] = useState(null);
+
   useEffect(() => {
     window.Dictionary = Dictionary;
 
@@ -48,7 +34,17 @@ export default function Grid({activePlayer}) {
       setBoard(generateBoardFromWords(words));
     });
   }, []);
+
   if (!board.length) return <>loading....</>
+
+  const setLetters = (row, col, letter) => {
+    setBoard(prevBoard => {
+      const newBoard = [...prevBoard];
+      newBoard[row][col] = letter;
+      return newBoard;
+    });
+  };
+
 
   return (
     <div
@@ -61,10 +57,11 @@ export default function Grid({activePlayer}) {
 
       {board.map((row, rowIndex) =>
         row.map((letter, colIndex) => (
-          // todo 1. додати юзМемо для GridItem
-          <GridItem  /*todo 3.через юзМемо додавати рідонлі для клітинок*/
+
+          <GridItem
             key={`${rowIndex}-${colIndex}`}
             letter={letter}
+            setLetters={setLetters}
             row={rowIndex}
             col={colIndex}
             activePlayer={activePlayer}

@@ -1,9 +1,6 @@
 import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import { loadPage } from './utils/loadPage';
-import TestPage from './pages/Test';
 import RootLayout from './pages/Root';
-import NotFound from "./pages/NotFound";
-import Game from "./pages/Game";
 
 const router = createBrowserRouter([
   {
@@ -11,9 +8,9 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { path: '/', element: loadPage('Home') },
-      { path: '/test', element: <TestPage /> },
-      { path: '/game', element: <Game /> },
-      { path: '/404', element: <NotFound /> },
+      { path: '/test', element:loadPage ('Test') },
+      { path: '/game', element: loadPage ('Game') },
+      { path: '/404', element: loadPage ('NotFound') },
       { path: '*', element: <Navigate to="/404" replace /> },
     ]
   }

@@ -6,20 +6,20 @@ export function GameProvider({children}){
   const [secondPlayerWords, setSecondPlayerWords] = useState( [])
   const [firstPlayerLetters, setFirstPlayerLetters] = useState( [])
   const [secondPlayerLetters, setSecondPlayerLetters] = useState( [])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [activePlayer, setActivePlayer] = useState(true);
   const handleNextTurn = () => {
     // setActivePlayer(prevState => !prevState);
-    if (activePlayer && firstPlayerLetters.length) {
-      const word = [...firstPlayerLetters];
-      setFirstPlayerWords(prev => [...prev, word]);
-      setFirstPlayerLetters([]);
-    } else if (!activePlayer && secondPlayerLetters.length) {
-      const word = [...secondPlayerLetters];
-
-      setSecondPlayerWords(prev => [...prev, word]);
-      setSecondPlayerLetters([]);
-    }
+    // if (activePlayer && firstPlayerLetters.length) {
+    //   const word = [...firstPlayerLetters];
+    //   setFirstPlayerWords(prev => [...prev, word]);
+    //   setFirstPlayerLetters([]);
+    // } else if (!activePlayer && secondPlayerLetters.length) {
+    //   const word = [...secondPlayerLetters];
+    //
+    //   setSecondPlayerWords(prev => [...prev, word]);
+    //   setSecondPlayerLetters([]);
+    // }
     setActivePlayer(prev => !prev);
   }
 
