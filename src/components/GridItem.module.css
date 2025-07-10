@@ -20,7 +20,7 @@
 }
 
 .active {
-  background-color: #d0f0c0;
+  background-color: #d0f0c0!important;
   border-color: #4caf50;
 }
 
@@ -33,4 +33,8 @@
   font-size: 30px;
   font-weight: 600;
   border: unset !important;
+}
+
+.highlight {
+  background-color: lightblue;
 }

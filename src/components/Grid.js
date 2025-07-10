@@ -24,7 +24,8 @@ function generateBoardFromWords(words) {
 
 export default function Grid({activePlayer}) {
   const [board, setBoard] = useState([]);
-  const [activeCell, setActiveCell] = useState(null);
+  const [activeCells, setActiveCells] = useState([]);
+  const [lastActiveCell, setLastActiveCell] = useState(null)
 
   useEffect(() => {
     window.Dictionary = Dictionary;
@@ -35,7 +36,7 @@ export default function Grid({activePlayer}) {
     });
   }, []);
 
-  if (!board.length) return <>loading....</>
+
 
   const setLetters = (row, col, letter) => {
     setBoard(prevBoard => {
@@ -45,6 +46,39 @@ export default function Grid({activePlayer}) {
     });
   };
 
+  const cellIsActive = (row, col) => {
+    console.log({row, col})
+    setActiveCells(prev => [...prev, { row, col }]);
+    setLastActiveCell({ row, col })
+  };
+
+  useEffect(() => {
+    console.log('active Cell', lastActiveCell);
+  }, [lastActiveCell]);
+
+  const isNeighborCell = (currentRow, currentCol) => {
+    return lastActiveCell !== null && (
+      (Math.abs(lastActiveCell.row - currentRow) === 1 && lastActiveCell.col === currentCol) ||
+      (Math.abs(lastActiveCell.col - currentCol) === 1 && lastActiveCell.row === currentRow)
+    )
+  }
+  const isCellActive = (rowIndex, colIndex) => {
+   return activeCells.some(cell => cell.row === rowIndex && cell.col === colIndex)
+  }
+
+  const boardDisabled = (rowIndex, colIndex) => {
+    if (isCellActive(rowIndex, colIndex) && board[rowIndex][colIndex] !== "") {
+      return true;
+    }
+
+    if (!lastActiveCell) {
+      return false;
+    }
+
+    return !isNeighborCell(rowIndex, colIndex);
+  }
+
+  if (!board.length) return <>loading....</>
 
   return (
     <div
@@ -61,10 +95,15 @@ export default function Grid({activePlayer}) {
           <GridItem
             key={`${rowIndex}-${colIndex}`}
             letter={letter}
+            cellIsActive={cellIsActive}
             setLetters={setLetters}
             row={rowIndex}
             col={colIndex}
             activePlayer={activePlayer}
+            onClick={{}}
+            isHightlight={isNeighborCell(rowIndex, colIndex)}
+            isActive={isCellActive(rowIndex, colIndex)}
+            isDisabled={boardDisabled(rowIndex,colIndex)}
           />
         ))
       )}
