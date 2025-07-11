@@ -21,11 +21,11 @@ function generateBoardFromWords(words) {
   return board;
 }
 
-
 export default function Grid({activePlayer}) {
   const [board, setBoard] = useState([]);
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
+  const [letterAdded, setLetterAdded] = useState(false);
 
   useEffect(() => {
     window.Dictionary = Dictionary;
@@ -37,16 +37,26 @@ export default function Grid({activePlayer}) {
   }, []);
 
 
-
   const setLetters = (row, col, letter) => {
     setBoard(prevBoard => {
       const newBoard = [...prevBoard];
       newBoard[row][col] = letter;
       return newBoard;
     });
+
+    setLetterAdded(true);
+    if(letter !== "") {
+      activeCell(row, col);
+      setActiveCells(prev => [...prev, { row, col }]);
+      setLastActiveCell({ row, col });
+    }
   };
 
-  const cellIsActive = (row, col) => {
+  const activeCell = (row, col) => {
+    if (board[row][col] === "") {
+      return;
+    }
+
     console.log({row, col})
     setActiveCells(prev => [...prev, { row, col }]);
     setLastActiveCell({ row, col })
@@ -56,26 +66,65 @@ export default function Grid({activePlayer}) {
     console.log('active Cell', lastActiveCell);
   }, [lastActiveCell]);
 
-  const isNeighborCell = (currentRow, currentCol) => {
-    return lastActiveCell !== null && (
-      (Math.abs(lastActiveCell.row - currentRow) === 1 && lastActiveCell.col === currentCol) ||
-      (Math.abs(lastActiveCell.col - currentCol) === 1 && lastActiveCell.row === currentRow)
+  const isNeighborCell = (rowIndex, colIndex) => {
+    if (!lastActiveCell) return false;
+    if (letterAdded && board[rowIndex][colIndex] === "") {
+      return false;
+    }
+
+    const lastCellIsEmpty = lastActiveCell && board[lastActiveCell.row][lastActiveCell.col] === "";
+    const currentCellIsEmpty = board[rowIndex][colIndex] === "";
+    if (lastCellIsEmpty && currentCellIsEmpty) {
+      return false;
+    }
+
+    return (
+      (Math.abs(lastActiveCell.row - rowIndex) === 1 && lastActiveCell.col === colIndex) ||
+      (Math.abs(lastActiveCell.col - colIndex) === 1 && lastActiveCell.row === rowIndex)
     )
   }
   const isCellActive = (rowIndex, colIndex) => {
    return activeCells.some(cell => cell.row === rowIndex && cell.col === colIndex)
   }
 
-  const boardDisabled = (rowIndex, colIndex) => {
-    if (isCellActive(rowIndex, colIndex) && board[rowIndex][colIndex] !== "") {
+  // const isGridItemDisabled = (rowIndex, colIndex) => {
+  //   if (letterAdded && board[rowIndex][colIndex] === "") {
+  //     return true;
+  //   }
+  //
+  //   if (isCellActive(rowIndex, colIndex) && board[rowIndex][colIndex] !== "") {
+  //     return true;
+  //   }
+  //
+  //   if (!lastActiveCell || board[rowIndex][colIndex] === "" ) {
+  //     return false;
+  //   }
+  //
+  //   if (lastActiveCell){
+  //     if (board[rowIndex][colIndex] === "" && !isNeighborCell(rowIndex, colIndex)) {
+  //       return true;
+  //     }
+  //   }
+  //
+  //   return !isNeighborCell(rowIndex, colIndex);
+  // }
+
+  const isGridItemDisabled = (rowIndex, colIndex) => {
+    if (isCellActive(rowIndex, colIndex)) {
       return true;
     }
 
-    if (!lastActiveCell) {
-      return false;
+    if (lastActiveCell) {
+      if (board[rowIndex][colIndex] === "" && !isNeighborCell(rowIndex, colIndex)) {
+        return true;
+      }
+
+      if (board[rowIndex][colIndex] !== "" && !isNeighborCell(rowIndex, colIndex)) {
+        return true;
+      }
     }
 
-    return !isNeighborCell(rowIndex, colIndex);
+    return false;
   }
 
   if (!board.length) return <>loading....</>
@@ -95,7 +144,7 @@ export default function Grid({activePlayer}) {
           <GridItem
             key={`${rowIndex}-${colIndex}`}
             letter={letter}
-            cellIsActive={cellIsActive}
+            activeCell={activeCell}
             setLetters={setLetters}
             row={rowIndex}
             col={colIndex}
@@ -103,11 +152,10 @@ export default function Grid({activePlayer}) {
             onClick={{}}
             isHightlight={isNeighborCell(rowIndex, colIndex)}
             isActive={isCellActive(rowIndex, colIndex)}
-            isDisabled={boardDisabled(rowIndex,colIndex)}
+            isDisabled={isGridItemDisabled(rowIndex,colIndex)}
           />
         ))
       )}
-
     </div>
   )
 }

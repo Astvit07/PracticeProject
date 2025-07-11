@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import classes from "./GridItem.module.css";
 import {GameContext} from "./GameContext";
 
-export default function GridItem({letter, setLetters, row, col, activePlayer, cellIsActive, isActive, isHightlight, isDisabled}) {
+export default function GridItem({letter, setLetters, row, col, activePlayer, activeCell, isActive, isHightlight, isDisabled}) {
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
@@ -18,7 +18,7 @@ export default function GridItem({letter, setLetters, row, col, activePlayer, ce
   }
 
   const handleSelectGridItem = () => {
-    cellIsActive(row, col);
+    activeCell(row, col);
   }
 
   return (

@@ -17,7 +17,7 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
 
   return (
     <div className="player-info">
-      <h2 className={isActive && classes.active}>Player Information</h2>
+      <h2 className={isActive ? classes.active : ''}>Player Information</h2>
       <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
         <p>Name: {name}</p>
         <button
