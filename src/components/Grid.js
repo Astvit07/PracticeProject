@@ -6,14 +6,14 @@ import {GameContext} from "./GameContext";
 const GRID_SIZE = 5;
 
 function emptyGrid() {
-  return Array.from({ length: GRID_SIZE }, () =>
-    Array.from({ length: GRID_SIZE }, () => "")
+  return Array.from({length: GRID_SIZE}, () =>
+    Array.from({length: GRID_SIZE}, () => "")
   );
 }
 
 function generateBoardFromWords(words) {
   const firstWord = words.filter(word => word.length === GRID_SIZE);
-  if  (firstWord.length === 0) return emptyGrid();
+  if (firstWord.length === 0) return emptyGrid();
 
   const word = firstWord[Math.floor(Math.random() * firstWord.length)];
   const board = emptyGrid();
@@ -31,8 +31,6 @@ export default function Grid({activePlayer}) {
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
-    firstPlayerLetters,
-    secondPlayerLetters,
     activePlayer: contextActivePlayer
   } = useContext(GameContext);
 
@@ -60,10 +58,22 @@ export default function Grid({activePlayer}) {
     });
 
     setLetterAdded(true);
-    if(letter !== "") {
-      activeCell(row, col);
-      setActiveCells(prev => [...prev, { row, col }]);
-      setLastActiveCell({ row, col });
+
+    if (letter !== "") {
+      const letterObj = {
+        row,
+        col,
+        letter: letter
+      };
+
+      if (activePlayer) {
+        setFirstPlayerLetters(prev => [...prev, letterObj]);
+      } else {
+        setSecondPlayerLetters(prev => [...prev, letterObj]);
+      }
+
+      setActiveCells(prev => [...prev, {row, col}]);
+      setLastActiveCell({row, col});
     }
   };
 
@@ -85,8 +95,8 @@ export default function Grid({activePlayer}) {
     }
 
     console.log({row, col})
-    setActiveCells(prev => [...prev, { row, col }]);
-    setLastActiveCell({ row, col })
+    setActiveCells(prev => [...prev, {row, col}]);
+    setLastActiveCell({row, col})
   };
 
   useEffect(() => {
@@ -111,30 +121,8 @@ export default function Grid({activePlayer}) {
     )
   }
   const isCellActive = (rowIndex, colIndex) => {
-   return activeCells.some(cell => cell.row === rowIndex && cell.col === colIndex)
+    return activeCells.some(cell => cell.row === rowIndex && cell.col === colIndex)
   }
-
-  // const isGridItemDisabled = (rowIndex, colIndex) => {
-  //   if (letterAdded && board[rowIndex][colIndex] === "") {
-  //     return true;
-  //   }
-  //
-  //   if (isCellActive(rowIndex, colIndex) && board[rowIndex][colIndex] !== "") {
-  //     return true;
-  //   }
-  //
-  //   if (!lastActiveCell || board[rowIndex][colIndex] === "" ) {
-  //     return false;
-  //   }
-  //
-  //   if (lastActiveCell){
-  //     if (board[rowIndex][colIndex] === "" && !isNeighborCell(rowIndex, colIndex)) {
-  //       return true;
-  //     }
-  //   }
-  //
-  //   return !isNeighborCell(rowIndex, colIndex);
-  // }
 
   const isGridItemDisabled = (rowIndex, colIndex) => {
     if (isCellActive(rowIndex, colIndex)) {
@@ -163,7 +151,7 @@ export default function Grid({activePlayer}) {
         gridTemplateColumns: `repeat(${GRID_SIZE}, 60px )`,
         justifyContent: "center",
         gap: "5px"
-    }}>
+      }}>
 
       {board.map((row, rowIndex) =>
         row.map((letter, colIndex) => (
@@ -179,7 +167,7 @@ export default function Grid({activePlayer}) {
             onClick={{}}
             isHightlight={isNeighborCell(rowIndex, colIndex)}
             isActive={isCellActive(rowIndex, colIndex)}
-            isDisabled={isGridItemDisabled(rowIndex,colIndex)}
+            isDisabled={isGridItemDisabled(rowIndex, colIndex)}
           />
         ))
       )}

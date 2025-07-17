@@ -2,14 +2,10 @@ import React, {useContext, useState} from "react";
 import classes from "./GridItem.module.css";
 import {GameContext} from "./GameContext";
 
-export default function GridItem({letter, setLetters, row, col, activePlayer, activeCell, isActive, isHightlight, isDisabled}) {
-  const {
-    setFirstPlayerLetters,
-    setSecondPlayerLetters,
-  } = useContext(GameContext);
+export default function GridItem({letter, setLetters, row, col, activeCell, isActive, isHightlight, isDisabled}) {
+  const {} = useContext(GameContext);
 
   const isReadOnly = Boolean(letter);
-
 
   const handleChange = (e) => {
     const value = e.target.value.slice(-1);
@@ -23,8 +19,6 @@ export default function GridItem({letter, setLetters, row, col, activePlayer, ac
 
   return (
     <div
-      // className={`${classes.grid_item} ${isActive ? classes.active : ''}`}
-      // onClick={handleActiveGridItem}
     >
       <input
         type="text"
