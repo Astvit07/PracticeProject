@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useState, useEffect} from "react";
 import classes from './PlayerInfo.module.css';
 import {GameContext} from "./GameContext";
 
@@ -9,11 +9,25 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
   const {
     firstPlayerWords,
     secondPlayerWords,
+    firstPlayerLetters,
+    secondPlayerLetters,
     setModalIsOpen,
   } = useContext(GameContext);
 
   const playerWords = isFirstPlayer ? firstPlayerWords : secondPlayerWords;
+  const currentLetters = isFirstPlayer ? firstPlayerLetters : secondPlayerLetters;
 
+  useEffect(() => {
+    if (playerWords && playerWords.length) {
+      // Простой подсчет: 1 очко за букву
+      const newScore = playerWords.reduce((total, word) => {
+        return total + word.length;
+      }, 0);
+      setScore(newScore);
+    }
+  }, [playerWords]);
+
+  const currentWord = currentLetters.map(item => item.letter).join('');
 
   return (
     <div className="player-info">
@@ -27,13 +41,20 @@ export default function PlayerInfo({name , isActive , isFirstPlayer}) {
 
       </div>
       {score !== '' && <p>Score: {score}</p>}
-      <ul>
-        {playerWords && playerWords.map((word,index) => (
-          <>
-            <li key={index}>{word.map(l => l.letter).join('')}</li>
-          </>
-        ))}
 
+      {currentLetters.length > 0 && (
+        <div className={classes.currentWord}>
+          <p> <strong>{currentWord}</strong></p>
+        </div>
+      )}
+      <ul>
+        {playerWords && playerWords.length > 0 ? (
+          playerWords.map((word, index) => (
+            <li key={index}>{Array.isArray(word) ? word.map(l => l.letter).join('') : word}</li>
+          ))
+        ) : (
+          <li>No words yet</li>
+        )}
       </ul>
     </div>
   );

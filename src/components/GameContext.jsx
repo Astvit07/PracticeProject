@@ -20,7 +20,16 @@ export function GameProvider({children}){
     //   setSecondPlayerWords(prev => [...prev, word]);
     //   setSecondPlayerLetters([]);
     // }
+
+    if (activePlayer && firstPlayerLetters.length) {
+      setFirstPlayerWords(prev => [...prev, [...firstPlayerLetters]]);
+      setFirstPlayerLetters([]);
+    } else if (!activePlayer && secondPlayerLetters.length) {
+      setSecondPlayerWords(prev => [...prev, [...secondPlayerLetters]]);
+      setSecondPlayerLetters([]);
+    }
     setActivePlayer(prev => !prev);
+
   }
 
   const handlePlayerNameChange = (name) =>(e)=>name(e.target.value);

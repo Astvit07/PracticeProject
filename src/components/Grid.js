@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import GridItem from "./GridItem";
 import Dictionary from "../service/dictionary";
+import {GameContext} from "./GameContext";
 
 const GRID_SIZE = 5;
 
@@ -26,6 +27,20 @@ export default function Grid({activePlayer}) {
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [letterAdded, setLetterAdded] = useState(false);
+
+  const {
+    setFirstPlayerLetters,
+    setSecondPlayerLetters,
+    firstPlayerLetters,
+    secondPlayerLetters,
+    activePlayer: contextActivePlayer
+  } = useContext(GameContext);
+
+  useEffect(() => {
+    setActiveCells([]);
+    setLastActiveCell(null);
+    setLetterAdded(false);
+  }, [contextActivePlayer]);
 
   useEffect(() => {
     window.Dictionary = Dictionary;
@@ -55,6 +70,18 @@ export default function Grid({activePlayer}) {
   const activeCell = (row, col) => {
     if (board[row][col] === "") {
       return;
+    }
+
+    const letterObj = {
+      row,
+      col,
+      letter: board[row][col]
+    };
+
+    if (activePlayer) {
+      setFirstPlayerLetters(prev => [...prev, letterObj]);
+    } else {
+      setSecondPlayerLetters(prev => [...prev, letterObj]);
     }
 
     console.log({row, col})
