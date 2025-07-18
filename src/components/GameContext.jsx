@@ -1,16 +1,15 @@
 import {createContext, useState} from "react";
 
 export const GameContext = createContext()
-export function GameProvider({children}){
-  const [firstPlayerWords, setFirstPlayerWords] = useState( [])
-  const [secondPlayerWords, setSecondPlayerWords] = useState( [])
-  const [firstPlayerLetters, setFirstPlayerLetters] = useState( [])
-  const [secondPlayerLetters, setSecondPlayerLetters] = useState( [])
+
+export function GameProvider({children}) {
+  const [firstPlayerWords, setFirstPlayerWords] = useState([])
+  const [secondPlayerWords, setSecondPlayerWords] = useState([])
+  const [firstPlayerLetters, setFirstPlayerLetters] = useState([])
+  const [secondPlayerLetters, setSecondPlayerLetters] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [activePlayer, setActivePlayer] = useState(true);
   const handleNextTurn = () => {
-
-
     if (activePlayer && firstPlayerLetters.length) {
       setFirstPlayerWords(prev => [...prev, [...firstPlayerLetters]]);
       setFirstPlayerLetters([]);
@@ -20,11 +19,9 @@ export function GameProvider({children}){
     }
     setActivePlayer(prev => !prev);
 
-  }
+  };
 
-  const handlePlayerNameChange = (name) =>(e)=>name(e.target.value);
-
-
+  const handlePlayerNameChange = (name) => (e) => name(e.target.value);
 
   return (
     <GameContext.Provider value={{
@@ -34,14 +31,14 @@ export function GameProvider({children}){
       setSecondPlayerLetters,
       modalIsOpen,
       setModalIsOpen,
-      handlePlayerNameChange,
       activePlayer,
       setActivePlayer,
-      handleNextTurn,
       firstPlayerWords,
       setFirstPlayerWords,
       secondPlayerWords,
       setSecondPlayerWords,
+      handleNextTurn,
+      handlePlayerNameChange,
     }}>
       {children}
     </GameContext.Provider>
