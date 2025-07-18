@@ -1,68 +1,37 @@
 import React, {useEffect, useState, useContext} from 'react';
 import GridItem from "./GridItem";
-import Dictionary from "../service/dictionary";
 import {GameContext} from "./GameContext";
-
-import {GRID_SIZE, emptyGrid, initBoard} from "../utils/boardUtils";
 import Modal from "./Modal/Modal";
+import {useBoard,GRID_SIZE} from "../service/useBoard";
+import classes from "../pages/Game.module.css";
 
 
-// const GRID_SIZE = 5;
-//
-// function emptyGrid() {
-//   return Array.from({length: GRID_SIZE}, () =>
-//     Array.from({length: GRID_SIZE}, () => "")
-//   );
-// }
-//
-// function generateBoardFromWords(words) {
-//   const firstWord = words.filter(word => word.length === GRID_SIZE);
-//   if (firstWord.length === 0) return emptyGrid();
-//
-//   const word = firstWord[Math.floor(Math.random() * firstWord.length)];
-//   const board = emptyGrid();
-//   const centerRow = Math.floor(GRID_SIZE / 2);
-//   board[centerRow] = word.split("");
-//   return board;
-// }
-
-export default function Grid({activePlayer}) {
-  const [board, setBoard] = useState([]);
+export default function Grid() {
+  const { board, updateBoard } = useBoard();
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [letterAdded, setLetterAdded] = useState(false);
   const [modalError, setModalError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('')
 
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
     firstPlayerLetters,
     secondPlayerLetters,
-    activePlayer: contextActivePlayer
+    activePlayer,
+    handleNextTurn,
+    secondPlayerWords,
+    firstPlayerWords,
   } = useContext(GameContext);
 
   useEffect(() => {
     setActiveCells([]);
     setLastActiveCell(null);
     setLetterAdded(false);
-  }, [contextActivePlayer]);
+  }, [activePlayer]);
 
-  // useEffect(() => {
-  //   window.Dictionary = Dictionary;
-  //
-  //   Dictionary.getDictionary().then(() => {
-  //     const words = Dictionary.getAll(); // Dictionary.dictionary
-  //     setBoard(generateBoardFromWords(words));
-  //   });
-  // }, []);
 
-  useEffect(() => {
-    window.Dictionary = Dictionary;
-
-    initBoard().then((newBoard) => {
-      setBoard(newBoard);
-    });
-  }, []);
 
   const resetSelection = () => {
     setActiveCells([]);
@@ -77,22 +46,37 @@ export default function Grid({activePlayer}) {
 
   const validationTurn = () =>{
     const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
-     if (currentLetters.length < 3) {
-       setModalError(true);
-       return false;
+    if (!currentLetters || currentLetters.length < 3) {
+      setModalError(true);
+      setErrorMessage('Ви повинні вибрати принаймні 3 літери для слова.');
+      return false;
+    }
+    const currentWord = currentLetters.map(letterObj => letterObj.letter).join('');
+    const opponentWords = activePlayer ? secondPlayerWords : firstPlayerWords;
+    const isDuplicate = opponentWords.some(wordArray => {
+      const word = wordArray.map(letterObj => letterObj.letter).join('');
+      return word === currentWord;
+    });
+    if (isDuplicate) {
+      setModalError(true);
+      resetSelection();
+      setErrorMessage("Слово вже використовується іншим гравцем.");
+      return false;
     }
     return true;
 
   }
 
+  const handleChangeTurn = () => {
+    if (validationTurn()) {
+      handleNextTurn();
+    }
+  }
 
   const setLetters = (row, col, letter) => {
-    setBoard(prevBoard => {
-      const newBoard = [...prevBoard];
-      newBoard[row][col] = letter;
-      return newBoard;
-    });
-
+    const newBoard = [...board];
+    newBoard[row][col] = letter;
+    updateBoard(newBoard);
     setLetterAdded(true);
 
     if (letter !== "") {
@@ -181,38 +165,45 @@ export default function Grid({activePlayer}) {
   if (!board.length) return <>loading....</>
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${GRID_SIZE}, 60px )`,
-        justifyContent: "center",
-        gap: "5px"
-      }}>
 
-      {board.map((row, rowIndex) =>
-        row.map((letter, colIndex) => (
+    <div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${GRID_SIZE}, 60px )`,
+          justifyContent: "center",
+          gap: "5px"
+        }}>
 
-          <GridItem
-            key={`${rowIndex}-${colIndex}`}
-            letter={letter}
-            activeCell={activeCell}
-            setLetters={setLetters}
-            row={rowIndex}
-            col={colIndex}
-            activePlayer={activePlayer}
-            onClick={{}}
-            isHightlight={isNeighborCell(rowIndex, colIndex)}
-            isActive={isCellActive(rowIndex, colIndex)}
-            isDisabled={isGridItemDisabled(rowIndex, colIndex)}
-          />
-        ))
-      )}
+        {board.map((row, rowIndex) =>
+          row.map((letter, colIndex) => (
+
+            <GridItem
+              key={`${rowIndex}-${colIndex}`}
+              letter={letter}
+              activeCell={activeCell}
+              setLetters={setLetters}
+              row={rowIndex}
+              col={colIndex}
+              activePlayer={activePlayer}
+              onClick={{}}
+              isHightlight={isNeighborCell(rowIndex, colIndex)}
+              isActive={isCellActive(rowIndex, colIndex)}
+              isDisabled={isGridItemDisabled(rowIndex, colIndex)}
+            />
+          ))
+        )}
+
+      </div>
       {activeCells.length > 0 && (
-        <button onClick={resetSelection}>Reset</button>
+        <div className={`${classes.centered} ${classes['p-3']}`}>
+          <button onClick={resetSelection}>Reset</button>
+          <button onClick={handleChangeTurn}>Go</button>
+        </div>
       )}
 
       <Modal isOpen={modalError} onClose={() => setModalError(false)}>
-        <Modal.Header>Введіть слово </Modal.Header>
+        <Modal.Header>{errorMessage}</Modal.Header>
 
         <Modal.Actions>
           <button
@@ -222,7 +213,6 @@ export default function Grid({activePlayer}) {
           </button>
         </Modal.Actions>
       </Modal>
-
     </div>
   )
 }
