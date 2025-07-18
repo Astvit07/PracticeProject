@@ -17,6 +17,8 @@ function Game() {
     secondPlayerName,
     setFirstPlayerName,
     setSecondPlayerName,
+    firstPlayerLetters,
+    secondPlayerLetters,
   } = useContext(PlayerContext);
 
   const {
@@ -31,6 +33,18 @@ function Game() {
       setModalIsOpen(false);
     }
   }
+
+  const handleChangeTurn = () => {
+    const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
+
+    if (currentLetters.length < 3) {
+      setModalIsOpen(true);
+      return;
+    }
+
+    handleNextTurn();
+  }
+
 
   return (
     <>
@@ -49,7 +63,7 @@ function Game() {
           />
         </div>
         <div className={`${classes.centered} ${classes['p-3']}`}>
-          <button onClick={handleNextTurn}>Go</button>
+          <button onClick={handleChangeTurn}>Go</button>
         </div>
 
         <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>

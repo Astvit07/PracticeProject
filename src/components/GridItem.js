@@ -1,10 +1,7 @@
-import React, {useContext, useState} from "react";
+import React from "react";
 import classes from "./GridItem.module.css";
-import {GameContext} from "./GameContext";
 
 export default function GridItem({letter, setLetters, row, col, activeCell, isActive, isHightlight, isDisabled}) {
-  const {} = useContext(GameContext);
-
   const isReadOnly = Boolean(letter);
 
   const handleChange = (e) => {

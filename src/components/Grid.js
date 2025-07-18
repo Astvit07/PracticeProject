@@ -3,34 +3,41 @@ import GridItem from "./GridItem";
 import Dictionary from "../service/dictionary";
 import {GameContext} from "./GameContext";
 
-const GRID_SIZE = 5;
+import {GRID_SIZE, emptyGrid, initBoard} from "../utils/boardUtils";
+import Modal from "./Modal/Modal";
 
-function emptyGrid() {
-  return Array.from({length: GRID_SIZE}, () =>
-    Array.from({length: GRID_SIZE}, () => "")
-  );
-}
 
-function generateBoardFromWords(words) {
-  const firstWord = words.filter(word => word.length === GRID_SIZE);
-  if (firstWord.length === 0) return emptyGrid();
-
-  const word = firstWord[Math.floor(Math.random() * firstWord.length)];
-  const board = emptyGrid();
-  const centerRow = Math.floor(GRID_SIZE / 2);
-  board[centerRow] = word.split("");
-  return board;
-}
+// const GRID_SIZE = 5;
+//
+// function emptyGrid() {
+//   return Array.from({length: GRID_SIZE}, () =>
+//     Array.from({length: GRID_SIZE}, () => "")
+//   );
+// }
+//
+// function generateBoardFromWords(words) {
+//   const firstWord = words.filter(word => word.length === GRID_SIZE);
+//   if (firstWord.length === 0) return emptyGrid();
+//
+//   const word = firstWord[Math.floor(Math.random() * firstWord.length)];
+//   const board = emptyGrid();
+//   const centerRow = Math.floor(GRID_SIZE / 2);
+//   board[centerRow] = word.split("");
+//   return board;
+// }
 
 export default function Grid({activePlayer}) {
   const [board, setBoard] = useState([]);
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [letterAdded, setLetterAdded] = useState(false);
+  const [modalError, setModalError] = useState(false);
 
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
+    firstPlayerLetters,
+    secondPlayerLetters,
     activePlayer: contextActivePlayer
   } = useContext(GameContext);
 
@@ -40,14 +47,43 @@ export default function Grid({activePlayer}) {
     setLetterAdded(false);
   }, [contextActivePlayer]);
 
+  // useEffect(() => {
+  //   window.Dictionary = Dictionary;
+  //
+  //   Dictionary.getDictionary().then(() => {
+  //     const words = Dictionary.getAll(); // Dictionary.dictionary
+  //     setBoard(generateBoardFromWords(words));
+  //   });
+  // }, []);
+
   useEffect(() => {
     window.Dictionary = Dictionary;
 
-    Dictionary.getDictionary().then(() => {
-      const words = Dictionary.getAll(); // Dictionary.dictionary
-      setBoard(generateBoardFromWords(words));
+    initBoard().then((newBoard) => {
+      setBoard(newBoard);
     });
   }, []);
+
+  const resetSelection = () => {
+    setActiveCells([]);
+    setLastActiveCell(null);
+    setLetterAdded(false);
+    if (activePlayer){
+      setFirstPlayerLetters([]);
+    } else {
+      setSecondPlayerLetters([]);
+    }
+  }
+
+  const validationTurn = () =>{
+    const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
+     if (currentLetters.length < 3) {
+       setModalError(true);
+       return false;
+    }
+    return true;
+
+  }
 
 
   const setLetters = (row, col, letter) => {
@@ -171,6 +207,22 @@ export default function Grid({activePlayer}) {
           />
         ))
       )}
+      {activeCells.length > 0 && (
+        <button onClick={resetSelection}>Reset</button>
+      )}
+
+      <Modal isOpen={modalError} onClose={() => setModalError(false)}>
+        <Modal.Header>Введіть слово </Modal.Header>
+
+        <Modal.Actions>
+          <button
+            onClick={() => setModalError(false)}
+          >
+            Ok
+          </button>
+        </Modal.Actions>
+      </Modal>
+
     </div>
   )
 }
