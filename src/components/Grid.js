@@ -4,8 +4,9 @@ import Dictionary from "../service/dictionary";
 import {GameContext} from "./GameContext";
 
 import {GRID_SIZE, emptyGrid, initBoard} from "../utils/boardUtils";
+import Modal from "./Modal/Modal";
 
-initBoard();
+
 // const GRID_SIZE = 5;
 //
 // function emptyGrid() {
@@ -30,10 +31,13 @@ export default function Grid({activePlayer}) {
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [letterAdded, setLetterAdded] = useState(false);
+  const [modalError, setModalError] = useState(false);
 
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
+    firstPlayerLetters,
+    secondPlayerLetters,
     activePlayer: contextActivePlayer
   } = useContext(GameContext);
 
@@ -59,6 +63,27 @@ export default function Grid({activePlayer}) {
       setBoard(newBoard);
     });
   }, []);
+
+  const resetSelection = () => {
+    setActiveCells([]);
+    setLastActiveCell(null);
+    setLetterAdded(false);
+    if (activePlayer){
+      setFirstPlayerLetters([]);
+    } else {
+      setSecondPlayerLetters([]);
+    }
+  }
+
+  const validationTurn = () =>{
+    const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
+     if (currentLetters.length < 3) {
+       setModalError(true);
+       return false;
+    }
+    return true;
+
+  }
 
 
   const setLetters = (row, col, letter) => {
@@ -182,6 +207,22 @@ export default function Grid({activePlayer}) {
           />
         ))
       )}
+      {activeCells.length > 0 && (
+        <button onClick={resetSelection}>Reset</button>
+      )}
+
+      <Modal isOpen={modalError} onClose={() => setModalError(false)}>
+        <Modal.Header>Введіть слово </Modal.Header>
+
+        <Modal.Actions>
+          <button
+            onClick={() => setModalError(false)}
+          >
+            Ok
+          </button>
+        </Modal.Actions>
+      </Modal>
+
     </div>
   )
 }
