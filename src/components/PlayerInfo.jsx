@@ -41,13 +41,10 @@ export default function PlayerInfo({name, isActive, isFirstPlayer}) {
         </button>
 
       </div>
-      {score !== '' && <p>Score: {score}</p>}
-
-      {currentLetters.length > 0 && (
-        <div className={classes.currentWord}>
-          <p><strong>{currentWord}</strong></p>
-        </div>
-      )}
+      <p>Score: {score !== "" ? score : 0}</p>
+      <div className={classes.currentWord}>
+        <p><strong>{currentWord}</strong></p>
+      </div>
       <ul>
         {playerWords && playerWords.length > 0 ? (
           playerWords.map((word, index) => (

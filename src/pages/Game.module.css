@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 20px;
 }
 .p-3 {
   padding: 48px 12px;

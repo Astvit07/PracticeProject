@@ -20,7 +20,6 @@ export default function GridItem({letter, setLetters, row, col, activeCell, isAc
       <input
         type="text"
         value={letter ? letter.toUpperCase() : letter}
-        // onChange={handleChange}
         onClick={handleSelectGridItem}
         readOnly={isReadOnly}
         onChange={handleChange}

@@ -8,24 +8,18 @@ import PlayerNameInput from "./PlayerNameInput";
 import {GameContext} from "../components/GameContext";
 
 function Game() {
-  // const [modalIsOpen, setModalIsOpen] = useState(true);
-  // const [firstPlayerName, setFirstPlayerName] = useState('Player 1');
-  // const [secondPlayerName, setSecondPlayerName] = useState('Player 1');
-  // const [activePlayer, setActivePlayer] = useState(true);
+
   const {
     firstPlayerName,
     secondPlayerName,
     setFirstPlayerName,
     setSecondPlayerName,
-    firstPlayerLetters,
-    secondPlayerLetters,
   } = useContext(PlayerContext);
 
   const {
     modalIsOpen,
     setModalIsOpen,
     activePlayer,
-    handleNextTurn,
     handlePlayerNameChange
   } = useContext(GameContext);
   const handleStart = () => {
@@ -33,18 +27,6 @@ function Game() {
       setModalIsOpen(false);
     }
   }
-
-  const handleChangeTurn = () => {
-    const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
-
-    if (currentLetters.length < 3) {
-      setModalIsOpen(true);
-      return;
-    }
-
-    handleNextTurn();
-  }
-
 
   return (
     <>
@@ -55,16 +37,14 @@ function Game() {
             isActive={activePlayer}
             isFirstPlayer={true}
           />
-          <Grid activePlayer={activePlayer}/>
+          <Grid/>
           <PlayerInfo
             name={secondPlayerName}
             isActive={!activePlayer
             } isFirstPlayer={false}
           />
         </div>
-        <div className={`${classes.centered} ${classes['p-3']}`}>
-          <button onClick={handleChangeTurn}>Go</button>
-        </div>
+
 
         <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
           <Modal.Header>Введіть імена гравців</Modal.Header>
