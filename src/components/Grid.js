@@ -10,7 +10,7 @@ export default function Grid() {
   const { board, updateBoard } = useBoard();
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
-  const [letterAdded, setLetterAdded] = useState(false);
+  const [isLetterEntered, setIsLetterEntered] = useState(false);
   const [modalError, setModalError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -28,19 +28,29 @@ export default function Grid() {
   useEffect(() => {
     setActiveCells([]);
     setLastActiveCell(null);
-    setLetterAdded(false);
-  }, [activePlayer]);
+    setIsLetterEntered(false);
+    // console.log('Буква вписана -  ' + isLetterEntered)
+  }, [activePlayer/*,isLetterEntered*/]);
 
 
 
   const resetSelection = () => {
     setActiveCells([]);
     setLastActiveCell(null);
-    setLetterAdded(false);
+    setIsLetterEntered(false);
     if (activePlayer){
       setFirstPlayerLetters([]);
     } else {
       setSecondPlayerLetters([]);
+    }
+    clearSelection();
+  }
+  const clearSelection = () => {
+    if (isLetterEntered && lastActiveCell) {
+      const { row, col } = lastActiveCell;
+      const newBoard = [...board];
+      newBoard[row][col] = "";
+      updateBoard(newBoard);
     }
   }
 
@@ -50,13 +60,21 @@ export default function Grid() {
       setModalError(true);
       setErrorMessage('Ви повинні вибрати принаймні 3 літери для слова.');
       return false;
-    }
+    };
+
+    if (!isLetterEntered){
+      setModalError(true);
+      setErrorMessage('Ви повинні ввести хоча б одну літеру.');
+      return false;
+    };
+
     const currentWord = currentLetters.map(letterObj => letterObj.letter).join('');
     const opponentWords = activePlayer ? secondPlayerWords : firstPlayerWords;
     const isDuplicate = opponentWords.some(wordArray => {
       const word = wordArray.map(letterObj => letterObj.letter).join('');
       return word === currentWord;
     });
+
     if (isDuplicate) {
       setModalError(true);
       resetSelection();
@@ -74,12 +92,19 @@ export default function Grid() {
   }
 
   const setLetters = (row, col, letter) => {
+    if (letter !== '' && !/^[а-щьюяїієґА-ЩЬЮЯЇІЄҐ]$/.test(letter)) {
+      clearSelection();
+      setModalError(true);
+      setErrorMessage('Дозволено вводити українські літери');
+      return;
+    }
+
     const newBoard = [...board];
     newBoard[row][col] = letter;
     updateBoard(newBoard);
-    setLetterAdded(true);
 
     if (letter !== "") {
+      setIsLetterEntered(true);
       const letterObj = {
         row,
         col,
@@ -125,7 +150,7 @@ export default function Grid() {
 
   const isNeighborCell = (rowIndex, colIndex) => {
     if (!lastActiveCell) return false;
-    if (letterAdded && board[rowIndex][colIndex] === "") {
+    if (isLetterEntered && board[rowIndex][colIndex] === "") {
       return false;
     }
 
