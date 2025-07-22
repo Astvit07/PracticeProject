@@ -2,18 +2,18 @@ import React, {useEffect, useState, useContext} from 'react';
 import GridItem from "./GridItem";
 import {GameContext} from "./GameContext";
 import Modal from "./Modal/Modal";
-import {useBoard,GRID_SIZE} from "../service/useBoard";
+// import {useBoard,GRID_SIZE} from "../service/useBoard";
 import classes from "../pages/Game.module.css";
-
+import { BoardContext, GRID_SIZE } from "../service/BoardContext";
 
 export default function Grid() {
-  const { board, updateBoard } = useBoard();
+  // const { board, updateBoard } = useBoard();
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [isLetterEntered, setIsLetterEntered] = useState(false);
   const [modalError, setModalError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('')
-
+  const { board, updateBoard } = useContext(BoardContext);
   const {
     setFirstPlayerLetters,
     setSecondPlayerLetters,
