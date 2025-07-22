@@ -68,6 +68,10 @@ export default function Grid() {
       return false;
     };
 
+    // if (!hasAvailableNeighbors() && activeCells.length > 0){
+    //   return true;
+    // }
+
     const currentWord = currentLetters.map(letterObj => letterObj.letter).join('');
     const opponentWords = activePlayer ? secondPlayerWords : firstPlayerWords;
     const isDuplicate = opponentWords.some(wordArray => {
@@ -90,7 +94,15 @@ export default function Grid() {
       handleNextTurn();
     }
   }
-
+  useEffect(() => {
+    const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
+    if (activeCells.length > 0 &&
+      isLetterEntered &&
+      !hasAvailableNeighbors() &&
+      currentLetters.length >= 3) {
+      handleChangeTurn();
+    }
+  }, [activeCells, isLetterEntered, firstPlayerLetters, secondPlayerLetters, activePlayer]);
   const setLetters = (row, col, letter) => {
     if (letter !== '' && !/^[а-щьюяїієґА-ЩЬЮЯЇІЄҐ]$/.test(letter)) {
       clearSelection();
@@ -186,6 +198,24 @@ export default function Grid() {
 
     return false;
   }
+  const hasAvailableNeighbors = () => {
+    if (!lastActiveCell) return false;
+
+    for (let rowIndex = 0; rowIndex < GRID_SIZE; rowIndex++) {
+      for (let colIndex = 0; colIndex < GRID_SIZE; colIndex++) {
+        if (!isCellActive(rowIndex, colIndex) && isNeighborCell(rowIndex, colIndex)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  // useEffect(() => {
+  //   if (activeCells.length > 0 && !hasAvailableNeighbors() && isLetterEntered) {
+  //     handleChangeTurn();
+  //   }
+  // }, [activeCells, isLetterEntered]);
+
 
   if (!board.length) return <>loading....</>
 
