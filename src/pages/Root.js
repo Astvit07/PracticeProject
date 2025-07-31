@@ -1,6 +1,6 @@
 import {Outlet} from 'react-router-dom';
-import MainNavigation from '../components/MainNavigation';
-import {PlayerProvider} from "../components/PlayerContext";
+import MainNavigation from '../components/Navigation/MainNavigation';
+import {PlayerProvider} from "../components/Player/PlayerContext";
 import {GameProvider} from "../components/GameContext";
 
 function RootLayout() {

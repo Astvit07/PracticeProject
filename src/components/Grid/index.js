@@ -1,13 +1,14 @@
 import React, {useEffect, useState, useContext} from 'react';
 import GridItem from "./GridItem";
-import {GameContext} from "./GameContext";
-import Modal from "./Modal/Modal";
-import {useBoard,GRID_SIZE} from "../service/useBoard";
-import classes from "../pages/Game.module.css";
+import {GameContext} from "../GameContext";
+import Modal from "../Modal/Modal";
+import {useBoard, GRID_SIZE} from "../../service/useBoard";
+import classes from "../../pages/Game.module.css";
+import ErrorModal from "../Modal/ErrorModal";
 
 
-export default function Grid() {
-  const { board, updateBoard } = useBoard();
+export default function Index() {
+  const {board, updateBoard} = useBoard();
   const [activeCells, setActiveCells] = useState([]);
   const [lastActiveCell, setLastActiveCell] = useState(null)
   const [isLetterEntered, setIsLetterEntered] = useState(false);
@@ -33,45 +34,50 @@ export default function Grid() {
   }, [activePlayer/*,isLetterEntered*/]);
 
 
-
   const resetSelection = () => {
     setActiveCells([]);
     setLastActiveCell(null);
     setIsLetterEntered(false);
-    if (activePlayer){
+
+    if (activePlayer) {
       setFirstPlayerLetters([]);
     } else {
       setSecondPlayerLetters([]);
     }
+
     clearSelection();
   }
   const clearSelection = () => {
     if (isLetterEntered && lastActiveCell) {
-      const { row, col } = lastActiveCell;
+      const {row, col} = lastActiveCell;
       const newBoard = [...board];
       newBoard[row][col] = "";
       updateBoard(newBoard);
     }
   }
 
-  const validationTurn = () =>{
+  const validationTurn = () => {
     const currentLetters = activePlayer ? firstPlayerLetters : secondPlayerLetters;
+
     if (!currentLetters || currentLetters.length < 3) {
       setModalError(true);
       setErrorMessage('Ви повинні вибрати принаймні 3 літери для слова.');
-      return false;
-    };
 
-    if (!isLetterEntered){
+      return false;
+    }
+
+    if (!isLetterEntered) {
       setModalError(true);
       setErrorMessage('Ви повинні ввести хоча б одну літеру.');
+
       return false;
-    };
+    }
 
     const currentWord = currentLetters.map(letterObj => letterObj.letter).join('');
     const opponentWords = activePlayer ? secondPlayerWords : firstPlayerWords;
     const isDuplicate = opponentWords.some(wordArray => {
       const word = wordArray.map(letterObj => letterObj.letter).join('');
+
       return word === currentWord;
     });
 
@@ -79,10 +85,11 @@ export default function Grid() {
       setModalError(true);
       resetSelection();
       setErrorMessage("Слово вже використовується іншим гравцем.");
+
       return false;
     }
-    return true;
 
+    return true;
   }
 
   const handleChangeTurn = () => {
@@ -92,7 +99,9 @@ export default function Grid() {
   }
 
   const setLetters = (row, col, letter) => {
-    if (letter !== '' && !/^[а-щьюяїієґА-ЩЬЮЯЇІЄҐ]$/.test(letter)) {
+    if (letter === '') return;
+
+    if (!/^[а-щьюяїієґА-ЩЬЮЯЇІЄҐ]$/.test(letter)) {
       clearSelection();
       setModalError(true);
       setErrorMessage('Дозволено вводити українські літери');
@@ -103,23 +112,16 @@ export default function Grid() {
     newBoard[row][col] = letter;
     updateBoard(newBoard);
 
-    if (letter !== "") {
-      setIsLetterEntered(true);
-      const letterObj = {
-        row,
-        col,
-        letter: letter
-      };
+    if (letter === "") return;
 
-      if (activePlayer) {
-        setFirstPlayerLetters(prev => [...prev, letterObj]);
-      } else {
-        setSecondPlayerLetters(prev => [...prev, letterObj]);
-      }
+    setIsLetterEntered(true);
+    const letterObj = { row, col, letter };
 
-      setActiveCells(prev => [...prev, {row, col}]);
-      setLastActiveCell({row, col});
-    }
+    const setPlayerLetters = activePlayer ? setFirstPlayerLetters : setSecondPlayerLetters;
+    setPlayerLetters(prev => [...prev, letterObj]);
+
+    setActiveCells(prev => [...prev, {row, col}]);
+    setLastActiveCell({row, col});
   };
 
   const activeCell = (row, col) => {
@@ -150,12 +152,14 @@ export default function Grid() {
 
   const isNeighborCell = (rowIndex, colIndex) => {
     if (!lastActiveCell) return false;
+
     if (isLetterEntered && board[rowIndex][colIndex] === "") {
       return false;
     }
 
     const lastCellIsEmpty = lastActiveCell && board[lastActiveCell.row][lastActiveCell.col] === "";
     const currentCellIsEmpty = board[rowIndex][colIndex] === "";
+
     if (lastCellIsEmpty && currentCellIsEmpty) {
       return false;
     }
@@ -170,27 +174,21 @@ export default function Grid() {
   }
 
   const isGridItemDisabled = (rowIndex, colIndex) => {
+
     if (isCellActive(rowIndex, colIndex)) {
       return true;
     }
 
-    if (lastActiveCell) {
-      if (board[rowIndex][colIndex] === "" && !isNeighborCell(rowIndex, colIndex)) {
-        return true;
-      }
-
-      if (board[rowIndex][colIndex] !== "" && !isNeighborCell(rowIndex, colIndex)) {
-        return true;
-      }
+    if (!lastActiveCell) {
+      return false;
     }
 
-    return false;
+    const isNeighbor = isNeighborCell(rowIndex, colIndex);
+
+    return !isNeighbor;
   }
 
-  if (!board.length) return <>loading....</>
-
   return (
-
     <div>
       <div
         style={{
@@ -227,17 +225,11 @@ export default function Grid() {
         </div>
       )}
 
-      <Modal isOpen={modalError} onClose={() => setModalError(false)}>
-        <Modal.Header>{errorMessage}</Modal.Header>
-
-        <Modal.Actions>
-          <button
-            onClick={() => setModalError(false)}
-          >
-            Ok
-          </button>
-        </Modal.Actions>
-      </Modal>
+      <ErrorModal
+        isOpen={modalError}
+        onClose={() => setModalError(false)}
+        errorMessage={errorMessage}
+      />
     </div>
   )
 }

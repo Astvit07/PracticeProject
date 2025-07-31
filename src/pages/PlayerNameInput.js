@@ -1,8 +1,5 @@
 import React from "react";
-
-
 export default function  PlayerNameInput ({value,onChange, ...props}) {
-
 
   return (
     <input

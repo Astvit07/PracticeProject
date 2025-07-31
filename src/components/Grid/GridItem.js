@@ -6,7 +6,6 @@ export default function GridItem({letter, setLetters, row, col, activeCell, isAc
 
   const handleChange = (e) => {
     const value = e.target.value.slice(-1);
-
     setLetters(row, col, value);
   }
 
@@ -15,8 +14,7 @@ export default function GridItem({letter, setLetters, row, col, activeCell, isAc
   }
 
   return (
-    <div
-    >
+    <div>
       <input
         type="text"
         value={letter ? letter.toUpperCase() : letter}

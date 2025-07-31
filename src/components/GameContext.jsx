@@ -1,7 +1,5 @@
 import {createContext, useState} from "react";
-
 export const GameContext = createContext()
-
 export function GameProvider({children}) {
   const [firstPlayerWords, setFirstPlayerWords] = useState([])
   const [secondPlayerWords, setSecondPlayerWords] = useState([])
@@ -18,9 +16,7 @@ export function GameProvider({children}) {
       setSecondPlayerLetters([]);
     }
     setActivePlayer(prev => !prev);
-
   };
-
   const handlePlayerNameChange = (name) => (e) => name(e.target.value);
 
   return (

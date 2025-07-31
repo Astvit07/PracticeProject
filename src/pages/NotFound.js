@@ -1,5 +1,4 @@
 import React from 'react';
-
 function NotFound() {
   return (
     <div>
@@ -7,5 +6,4 @@ function NotFound() {
     </div>
   );
 }
-
 export default NotFound;

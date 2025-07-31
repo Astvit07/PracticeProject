@@ -6,15 +6,15 @@ import ModalActions from './ModalActions';
 import './Modal.css';
 
 const ModalContext = createContext();
-
 export function useModalContext() {
   const ctx = useContext(ModalContext);
+
   if (!ctx) {
     throw new Error('Modal components must be wrapped by <Modal>');
   }
+
   return ctx;
 }
-
 export default function Modal({ children, isOpen, onClose }) {
   if (!isOpen) return null;
 

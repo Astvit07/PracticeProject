@@ -1,6 +1,6 @@
 import {useContext, useState, useEffect} from "react";
 import classes from './PlayerInfo.module.css';
-import {GameContext} from "./GameContext";
+import {GameContext} from "../GameContext";
 
 export default function PlayerInfo({name, isActive, isFirstPlayer}) {
 
@@ -28,6 +28,12 @@ export default function PlayerInfo({name, isActive, isFirstPlayer}) {
 
   const currentWord = currentLetters.map(item => item.letter).join('');
 
+  const renderWord = (word) => {
+    return Array.isArray(word)
+      ? word.map(l => l.letter.toUpperCase()).join('')
+      : word;
+  };
+
   return (
     <div className="player-info">
       <div
@@ -37,7 +43,8 @@ export default function PlayerInfo({name, isActive, isFirstPlayer}) {
         <button
           className="btn btn-primary"
           onClick={() => setModalIsOpen(true)}
-        >edit
+        >
+          edit
         </button>
 
       </div>
@@ -48,7 +55,7 @@ export default function PlayerInfo({name, isActive, isFirstPlayer}) {
       <ul>
         {playerWords && playerWords.length > 0 ? (
           playerWords.map((word, index) => (
-            <li key={index}>{Array.isArray(word) ? word.map(l => l.letter.toUpperCase()).join('') : word}</li>
+            <li key={index}>{renderWord(word)}</li>
           ))
         ) : (
           <li>No words yet</li>

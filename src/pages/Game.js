@@ -1,32 +1,21 @@
 import React, {useContext} from 'react';
 import classes from './Game.module.css';
-import Grid from "../components/Grid";
+import Grid from "../components/Grid/index";
 import Modal from "../components/Modal/Modal";
-import PlayerInfo from "../components/PlayerInfo";
-import {PlayerContext} from "../components/PlayerContext";
+import PlayerInfo from "../components/Player/PlayerInfo";
+import {PlayerContext} from "../components/Player/PlayerContext";
 import PlayerNameInput from "./PlayerNameInput";
 import {GameContext} from "../components/GameContext";
+import PlayerNameModal from "../components/Modal/PlayerNameModal";
 
 function Game() {
 
   const {
     firstPlayerName,
     secondPlayerName,
-    setFirstPlayerName,
-    setSecondPlayerName,
   } = useContext(PlayerContext);
 
-  const {
-    modalIsOpen,
-    setModalIsOpen,
-    activePlayer,
-    handlePlayerNameChange
-  } = useContext(GameContext);
-  const handleStart = () => {
-    if (firstPlayerName.trim() !== "" && secondPlayerName.trim() !== "") {
-      setModalIsOpen(false);
-    }
-  }
+  const { activePlayer } = useContext(GameContext);
 
   return (
     <>
@@ -44,36 +33,7 @@ function Game() {
             } isFirstPlayer={false}
           />
         </div>
-
-
-        <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
-          <Modal.Header>Введіть імена гравців</Modal.Header>
-          <Modal.Body>
-            <div className={classes.inputBox}>
-              <PlayerNameInput
-                value={firstPlayerName}
-                onChange={handlePlayerNameChange(setFirstPlayerName)}
-              />
-              <PlayerNameInput
-                value={secondPlayerName}
-                onChange={handlePlayerNameChange(setSecondPlayerName)}
-              />
-            </div>
-
-          </Modal.Body>
-          <Modal.Actions>
-            <button
-              onClick={handleStart}
-              onKeyDown={e => {
-                if (e.key === "Enter") {
-                  handleStart();
-                }
-              }}
-            >
-              Start
-            </button>
-          </Modal.Actions>
-        </Modal>
+        <PlayerNameModal />
       </div>
     </>
   );
